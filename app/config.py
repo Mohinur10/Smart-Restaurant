@@ -23,7 +23,9 @@ class Config:
     BOT_TOKEN: str = field(default_factory=lambda: _get_env("BOT_TOKEN", required=True))
 
     # --- Database ---
-    DATABASE_URL: str = field(default_factory=lambda: _get_env("DATABASE_URL", required=True))
+    DATABASE_URL: str = field(
+        default_factory=lambda: _get_env("DATABASE_URL", required=True).replace("postgresql://", "postgresql+asyncpg://")
+    )
 
     # --- Admin ---
     ADMIN_USERNAME: str = field(default_factory=lambda: _get_env("ADMIN_USERNAME", "admin"))
