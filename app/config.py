@@ -24,7 +24,11 @@ class Config:
 
     # --- Database ---
     DATABASE_URL: str = field(
-        default_factory=lambda: _get_env("DATABASE_URL", required=True).replace("postgresql://", "postgresql+asyncpg://")
+        default_factory=lambda: _get_env("DATABASE_URL", required=True)
+        .replace("postgresql://", "postgresql+asyncpg://")
+        .replace("sslmode=require", "ssl=require")
+        .replace("&channel_binding=require", "")
+        .replace("?channel_binding=require", "?")
     )
 
     # --- Admin ---
