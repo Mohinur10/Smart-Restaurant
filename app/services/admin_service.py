@@ -9,7 +9,7 @@ from app.utils.security import hash_password, verify_password
 
 async def get_staff_by_username(username: str) -> Admin | None:
     async with get_session() as session:
-        result = await session.execute(select(Admin).where(Admin.username == username))
+        result = await session.execute(select(Admin).where(Admin.username.ilike(username)))
         return result.scalar_one_or_none()
 
 
@@ -28,6 +28,12 @@ async def authenticate(username: str, password: str, telegram_id: int) -> Admin 
         return None
 
     async with get_session() as session:
+        # Boshqa akkauntda ushbu telegram_id bo'lsa, uni tozalaymiz (xatolik bermasligi uchun)
+        result = await session.execute(select(Admin).where(Admin.telegram_id == telegram_id))
+        existing_owner = result.scalar_one_or_none()
+        if existing_owner and existing_owner.id != staff.id:
+            existing_owner.telegram_id = None
+
         db_staff = await session.get(Admin, staff.id)
         db_staff.telegram_id = telegram_id
         await session.commit()
