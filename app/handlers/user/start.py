@@ -22,18 +22,24 @@ async def cmd_start(message: Message, command: CommandObject, state: FSMContext)
 
     # Deep-link: https://t.me/<bot>?start=table_<qr_token>
     args = command.args
-    if args and args.startswith("table_"):
-        token = args.removeprefix("table_")
-        table = await get_table_by_token(token)
-        if table:
-            await state.update_data(table_id=table.id, table_number=table.number)
-            await message.answer(
-                f"👋 Xush kelibsiz!\n\n📍 Siz <b>{table.number}-stoldasiz</b>.",
-                reply_markup=main_menu_kb(),
-            )
-            return
-        else:
-            await message.answer("⚠️ QR kod noto'g'ri yoki eskirgan. Iltimos, ofitsiantga murojaat qiling.")
+    if args:
+        token = None
+        if args.startswith("table_"):
+            token = args.removeprefix("table_")
+        elif args.startswith("table"):
+            token = args.removeprefix("table")
+            
+        if token:
+            table = await get_table_by_token(token)
+            if table:
+                await state.update_data(table_id=table.id, table_number=table.number)
+                await message.answer(
+                    f"👋 Xush kelibsiz!\n\n📍 Siz <b>{table.number}-stoldasiz</b>.",
+                    reply_markup=main_menu_kb(),
+                )
+                return
+            else:
+                await message.answer("⚠️ QR kod noto'g'ri yoki eskirgan. Iltimos, ofitsiantga murojaat qiling.")
 
     await message.answer(
         "👋 Assalomu alaykum!\n\nSmart Restaurant botiga xush kelibsiz.\n"

@@ -31,7 +31,7 @@ async def create_table(number: int, branch_id: int | None = None) -> Table:
     `https://t.me/<bot_username>?start=table_<qr_token>` linkidan kirishi kerak.
     """
     async with get_session() as session:
-        table = Table(number=number, branch_id=branch_id, qr_token=secrets.token_urlsafe(8))
+        table = Table(number=number, branch_id=branch_id, qr_token=str(number))
         session.add(table)
         await session.commit()
         await session.refresh(table)
